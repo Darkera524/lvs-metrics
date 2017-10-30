@@ -62,11 +62,14 @@ func collect() {
 		mvs := []*model.MetricValue{}
 
 		// Collect metrics from /proc/net/ip_vs
-		vips, err := GetIPVSStats()
+		vips, rips, err := GetIPVSStats()
 		if err != nil {
 			glog.Errorf("%s", err.Error())
 		}
 		mvs, _ = ConvertVIPs2Metrics(vips)
+		g.SendMetrics(mvs)
+
+		mvs, _ = ConvertRIPs2Metrics(rips)
 		g.SendMetrics(mvs)
 
 		// Collect metrics from /proc/net/ip_vs_stats
@@ -76,6 +79,164 @@ func collect() {
 		}
 		g.SendMetrics(mvs)
 	}
+}
+
+func ConvertRIPs2Metrics(rips []*RealServer)(metrics []*model.MetricValue, err error){
+	if len(rips) <= 0 {
+		return nil, nil
+	}
+
+	var tags string
+	var attachtags = g.Config().AttachTags
+	var interval int64 = g.Config().Transfer.Interval
+	if attachtags != "" {
+		tags = attachtags
+	}
+
+	hostname, _ := g.Hostname()
+	now := time.Now().Unix()
+	var metric *model.MetricValue
+	for _, rip := range rips {
+		var tag string
+		if tags != "" {
+			tag = fmt.Sprintf("%s,vip=%s:%d,rip=%s:%d", tags, rip.VIP, rip.VPort, rip.IP, rip.Port)
+		} else {
+			tag = fmt.Sprintf("vip=%s:%d,rip=%s:%d", rip.VIP, rip.VPort, rip.IP, rip.Port)
+		}
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.active_conns",
+			Value:     rip.ActiveConns,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.inactive_conns",
+			Value:     rip.InactiveConns,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.connections",
+			Value:     rip.Connections,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.packets_in",
+			Value:     rip.PacketsIn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.packets_out",
+			Value:     rip.PacketsOut,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.bytes_in",
+			Value:     rip.BytesIn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.bytes_out",
+			Value:     rip.BytesOut,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.CPS",
+			Value:     rip.CPS,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.PPS_in",
+			Value:     rip.PPSIn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.PPS_out",
+			Value:     rip.PPSOut,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.BPS_in",
+			Value:     rip.BPSIn,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+		metric = &model.MetricValue{
+			Endpoint:  hostname,
+			Metric:    "lvs.rip.BPS_out",
+			Value:     rip.BPSOut,
+			Timestamp: now,
+			Step:      interval,
+			Type:      "GAUGE",
+			Tags:      tag,
+		}
+		metrics = append(metrics, metric)
+
+	}
+	return metrics, nil
 }
 
 func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, err error) {
@@ -139,7 +300,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.Connections,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "COUNTER",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
@@ -150,7 +311,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.PacketsIn,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "COUNTER",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
@@ -161,7 +322,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.PacketsOut,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "COUNTER",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
@@ -172,7 +333,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.BytesIn,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "COUNTER",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
@@ -183,7 +344,7 @@ func ConvertVIPs2Metrics(vips []*VirtualIPPoint) (metrics []*model.MetricValue, 
 			Value:     vip.BytesOut,
 			Timestamp: now,
 			Step:      interval,
-			Type:      "COUNTER",
+			Type:      "GAUGE",
 			Tags:      tag,
 		}
 		metrics = append(metrics, metric)
