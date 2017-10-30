@@ -83,11 +83,11 @@ or
 | lvs.vip.active_conn | GUAGE | lvs active connections per vip now |
 | lvs.vip.inact_conn | GUAGE | lvs inactive connections per vip now |
 | lvs.vip.rs_num | GUAGE | lvs live realserver num per vip now |
-| lvs.vip.conns | COUNTER->GAUGE| lvs conns counter from service start per vip |
-| lvs.vip.inbytes | COUNTER | lvs inbytes counter from service start per vip |
-| lvs.vip.outbytes | COUNTER | lvs outpkts counter from service start per vip |
-| lvs.vip.inpkts | COUNTER | lvs inpkts counter from service start per vip |
-| lvs.vip.outpkts | COUNTER | lvs outpkts counter from service start per vip |
+| lvs.vip.conns | COUNTER->GAUGE | lvs conns counter from service start per vip |
+| lvs.vip.inbytes | COUNTER->GAUGE | lvs inbytes counter from service start per vip |
+| lvs.vip.outbytes | COUNTER->GAUGE | lvs outpkts counter from service start per vip |
+| lvs.vip.inpkts | COUNTER->GAUGE | lvs inpkts counter from service start per vip |
+| lvs.vip.outpkts | COUNTER->GAUGE | lvs outpkts counter from service start per vip |
 
 
 [libnl3]: https://www.infradead.org/~tgr/libnl
