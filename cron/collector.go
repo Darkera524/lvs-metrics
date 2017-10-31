@@ -365,7 +365,7 @@ func ParseIPVSStats(file string) (metrics []*model.MetricValue, err error) {
 	if len(lines) < 6 {
 		return nil, fmt.Errorf("ip_vs_stats content invalid")
 	}
-	array_total := strings.Fields(lines[3])
+	array_total := strings.Fields(lines[2])
 	//array_speed := strings.Fields(lines[5])
 
 	var attachtags = g.Config().AttachTags
