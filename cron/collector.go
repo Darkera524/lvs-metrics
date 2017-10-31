@@ -365,14 +365,15 @@ func ParseIPVSStats(file string) (metrics []*model.MetricValue, err error) {
 	if len(lines) < 6 {
 		return nil, fmt.Errorf("ip_vs_stats content invalid")
 	}
-	array := strings.Fields(lines[5])
+	array_total := strings.Fields(lines[3])
+	//array_speed := strings.Fields(lines[5])
 
 	var attachtags = g.Config().AttachTags
 	var interval int64 = g.Config().Transfer.Interval
 	now := time.Now().Unix()
 	hostname, _ := g.Hostname()
 	for i, v := range STATS {
-		value, _ := strconv.ParseInt(array[i], 16, 0)
+		value, _ := strconv.ParseInt(array_total[i], 16, 0)
 		metricName := fmt.Sprintf("lvs.%s", v)
 		metric := &model.MetricValue{
 			Endpoint:  hostname,
