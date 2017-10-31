@@ -1,6 +1,10 @@
 # **lvs-metrics** <sup><sub>_lvs metrics collector for open-falcon_</sub></sup>
 
-lvs metrics collector for open-falcon.
+local version of lvs metrics collector for open-falcon.
+
+changes:
+ - Add the data between the rip and vip
+ - fix the bug of total data(it was rate data before)
 
 ## Dependencies
 
