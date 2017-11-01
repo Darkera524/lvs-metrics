@@ -29,7 +29,7 @@ or
 
 #### Only needed in compile machine.
 ```console
-$ git clone https://github.com/mesos-utility/lvs-metrics.git
+$ git clone https://github.com/Darkera524/lvs-metrics.git
 $ cd lvs-metrics
 $ make bin
 ```
