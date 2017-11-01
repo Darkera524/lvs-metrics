@@ -4,7 +4,8 @@ local version of lvs metrics collector for open-falcon.
 
 changes:
  - Add the data between the rip and vip
- - fix the bug of total data(it was rate data before)
+ - Fix the bug of total data(it was rate data before)
+ - Add the function of collect the info per process
 
 ## Dependencies
 

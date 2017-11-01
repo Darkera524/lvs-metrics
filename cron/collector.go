@@ -78,6 +78,8 @@ func collect() {
 			glog.Errorf("%s", err.Error())
 		}
 		g.SendMetrics(mvs)
+
+		CollectProc()
 	}
 }
 
